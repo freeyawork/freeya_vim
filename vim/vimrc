@@ -1,0 +1,81 @@
+" I use vundle to manager all plugins
+" set vundle plugin manager
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+call vundle#rc()
+
+Plugin 'gmarik/vundle'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+Plugin 'honza/vim-snippets'
+Plugin 'vim-syntastic/syntastic'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'scrooloose/nerdtree' 
+"每个插件都应该在这一行之前  
+call vundle#end() " required
+
+autocmd vimenter * NERDTree
+set foldmethod=indent
+set foldlevel=99 
+" press space to fold/unfold code
+nnoremap <space> za
+vnoremap <space> zf
+
+" syntastic setting
+"set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+
+" general setting start here
+
+set number
+set expandtab
+set tabstop=8
+set shiftwidth=4
+set softtabstop=4
+set autoindent
+
+" 启用鼠标 
+" set mouse=a 
+"
+" " 启用行号 
+" set nu
+"
+filetype plugin indent on
+filetype plugin on
+
+" f5 run
+map <F5> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+	exec "w"
+if &filetype == 'python'
+	exec "!time python2.7 %"
+endif
+endfunc
+
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+autocmd BufNewFile *.cpp,*.py,*.[ch],*.sh,*.java exec ":call SetTitle()" 
+""定义函数SetTitle，自动插入文件头 
+func SetTitle() 
+    "如果文件类型为.sh文件 
+    if &filetype == 'python' 
+        call append(line("."), "\# -*- coding = utf-8 -*-") 
+        call append(line(".")+1, "\"\"\"") 
+        call append(line(".")+2, "\# Author: Chenxi Wang") 
+        call append(line(".")+3, "\# File Name: ".expand("%")) 
+        call append(line(".")+4, "\"\"\"")
+        silent normal! ggddG o
+    endif
+    "新建文件后，自动定位到文件末尾
+    autocmd BufNewFile * normal G
+endfunc
+map <C-n> :NERDTreeToggle<CR>
